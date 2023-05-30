@@ -24,4 +24,4 @@ if __name__ == '__main__':                                                  # En
                       type=str,
                       choices=news_site_choices)                            # Las opciones que estan en "config.yaml" en el mapa "news_site_choices" que convertimos a lista arriba
   args = parser.parse_args()                                                # Le pedimos al "parser" que los parsee y nos de un objeto con ellos
-  _news_scraper(args.news_site)                                             # Comenzamos nuestro "scrapper"
+  _news_scraper(args.news_site)                                             # Comenzamos nuestro "scrapper" 

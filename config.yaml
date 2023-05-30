@@ -11,4 +11,4 @@ news_sites:                                                                   # 
     queries:
       homepage_article_links: '.c_h a'
       article_body: '.a_c'
-      article_title: '.a_e_txt h1'
+      article_title: '.a_e_txt h1' 
