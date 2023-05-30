@@ -2,7 +2,7 @@ import yaml                                                               # Impo
 
 __config = None                                                           # Variable global, nos va a servir para poder "cachear" nuestra configuración
 
-def config():
+def config():                                                             # Retorna un diccionario, recibe el archivo como parámetro (más abajo)
   global __config
   if not __config:                                                        # Solo vamos a leer la configuracion una sola vez, y si ya esta cargada solo la devolvemos y si no esta cargada la devolvemos
     with open('config.yaml', mode='r') as file:                           # Abrimos el archivo config.yaml

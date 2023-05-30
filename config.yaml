@@ -2,9 +2,9 @@
 news_sites:                                                                   # Esto luego se volvera un diccionario
   eluniversal:
     url: http://www.eluniversal.com.mx
-    queries:
-      homepage_article_links: '.field-content a'
+    queries:                                                                  # Agregamos la sección de 'queries' que serán los links dentro de las paginas web a lo que le haremos el "web scrapping"
+      homepage_article_links: '.regionals__title a'                           # Usando selectores de CSS indicamos que elemento le haremos el 'web scrappin', pueden ser unos cuantos y cientos de links (chequear la página para ver los selectores a utilizar)
   elpais:
     url: https://elpais.com
     queries:
-      homepage_article_links: '.headline a'
+      homepage_article_links: '.c_h a'
