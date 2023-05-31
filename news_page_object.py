@@ -41,12 +41,12 @@ class ArticlePage(NewsPage):                                                    
 
   @property                                                                         # Declaramos su propiedad y computamos el acceso a los datos que necesitamos
   def body(self):                                                                   # Retorna los datos del "body" del articulo
-    result = self._select(self.queries['article_body'])                             # Utilizamos el método "select" de la instacia de la superclase "NewsPage" para que seleccione los nodos del arbol de nodos (elementos html) y los guarde en "result", nos devuelve una lista
+    result = self._select(self._queries['article_body'])                            # Utilizamos el método "select" de la instacia de la superclase "NewsPage" para que seleccione los nodos del arbol de nodos (elementos html) y los guarde en "result", nos devuelve una lista
     return result[0].text if len(result) else ''                                    # Ya que el método "select" nos devuelve una lista, seleccionamos el primer elemento, siempre y cuando exista un elemento al hacer una validación
 
   @property                                                                         # Declaramos su propiedad y computamos el acceso a los datos que necesitamos
   def title(self):                                                                  # Retorna el titulo del articulo de la notica
-    result = self._select(self.queries['article_title'])                            # Utilizamos el método "select" de la instacia de la superclase "NewsPage" para que seleccione los nodos del arbol de nodos (elementos html) y los guarde en "result", nos devuelve una lista
+    result = self._select(self._queries['article_title'])                           # Utilizamos el método "select" de la instacia de la superclase "NewsPage" para que seleccione los nodos del arbol de nodos (elementos html) y los guarde en "result", nos devuelve una lista
     return result[0].text if len(result) else ''                                    # Ya que el método "select" nos devuelve una lista, seleccionamos el primer elemento, siempre y cuando exista un elemento al hacer una validación 
 
 
