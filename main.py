@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)                                        # Ob
 
 is_well_formed_link = re.compile(r'^https?://.+/.+$')                       # Definimos el formato que debe tener un link valido. Ejemplo del tipo de patron que acepta la Expresión Regular "https://example.com/hello"
 is_root_path = re.compile(r'^/.+$')                                         # Definimos el formato de los links que se basa a la raiz (root). Ejemplo: /some-text
+is_other_host = re.compile(r'^https?://.+/$')
 
 
 def _news_scraper(news_site_uid):                                           # Ejecuta el "scrapper" recibe como argumento el "news_site_uid"
@@ -29,7 +30,6 @@ def _news_scraper(news_site_uid):                                           # Ej
       logger.info('Article fetched!!!')
       articles.append(article)                                              # Agregamos el articulo a mi lista de articulos
       print(article.title)
-      break                                                     # Puedes borrar esto
   print('Número de articulos encontrados: {}'.format(len(articles)))        # Imprimo el número de articulos que logramos obtener
 
   _save_articles(news_site_uid, articles)                                   # Invocamos la función para guardar los datos, le mandamos como parámetros los "news_site_uid" y "articles" que es la lista de objetos de los articulos validos que encontro
@@ -46,7 +46,7 @@ def _save_articles(news_site_uid, articles):                                # Gu
     writer.writerow(csv_headers)                                            # Le decimos al "writer" que escriba a la primera columna los Headers
 
     for article in articles:                                                # Guardamos todos nuestros articulos
-      row = [str(getattr(article, prop)) for prop in csv_headers]           # Nos garantiza que todas las propiedades las vamos a poder guardar (for prop in csv_headers)
+      row = [str(getattr(article, property)) for property in csv_headers]   # Nos garantiza que todas las propiedades las vamos a poder guardar (for prop in csv_headers)
       writer.writerow(row)                                                  # Lo escribimos en el row
 
 
@@ -69,6 +69,8 @@ def _fetch_article(news_site_uid, host, link):                              # No
 
 def _build_link(host, link):                                                # Verifica que el link tenga buen formato y si no lo tiene le coloca ese formato, recibe como parámetros el "host" y "link"
   if is_well_formed_link.match(link):                                       # Si el link esta buen planteado simplemente lo retornamos
+    return link
+  elif is_other_host.match(link):                                           # Para que no concatee dos links que empiezan con "https://"
     return link
   elif is_root_path.match(link):                                            # Si el link comienza con diagonal le damos un formato ideal que empieze con el "host" y luego el "link". Ejemplo: https://Hostname/example
     return '{}{}'.format(host, link)
