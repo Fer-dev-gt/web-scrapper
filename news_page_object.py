@@ -8,6 +8,7 @@ class NewsPage:                                                                 
     self._config = config()['news_sites'][news_site_uid]                            # Obtenemos una referencia a nuestra configuración llamando a la función "config()" y accedemos a nuestra primera llave del diccionario "[news_sites]" le pasamos el id que estamos usando como parámetro "[news_site_uid]"
     self._queries = self._config['queries']                                         # Vamos a obtener "queries" de la configuración de arriba y le decimos que queremos esas "queries" y la guardamos en la variable 'self._queries'
     self._html = None                                                               # Inicializamos una variable para el html "self._html" y la asignamos como None
+    self._url = url                                                                 # Recibe y guarda la URL de la noticia encontrada
     self._visit(url)                                                                # Llamamos a nuestro método "_visit(url)" y le damos la url que usamos al ejecutar el programa
 
   def _select(self, query_string):                                                  # Función auxiliar que nos ayudara a obtener información del objeto que acabamos de "parsear", recibe un 'query_string'
@@ -37,7 +38,6 @@ class HomePage(NewsPage):                                                       
 
 class ArticlePage(NewsPage):                                                        # Esta clase tambien se extiende de "NewsPage" ya que tambien es un tipo de página de noticia
   def __init__(self, news_site_uid, url):                                           # Inicializa esta clase
-    self._url = url                                                                 # Recibe y guarda la URL de la noticia encontrada
     super().__init__(news_site_uid, url)                                            # Inicializa a su super clase "NewsPage"
 
   @property                                                                         # Declaramos su propiedad y computamos el acceso a los datos que necesitamos
