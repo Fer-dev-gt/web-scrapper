@@ -2,6 +2,9 @@ import pandas as pd
 import argparse                                                                       # Librería para convertir esto en un Script
 import hashlib                                                                        # La librería hashlib nos sirve para trabajar con operacione criptograficas y para generar un hash de la URL
 import re
+import nltk
+from   nltk.corpus import stopwords                                                   # Los 'Stowords' son palabras que no nos aportan información revelante, Ej: 'el', 'la', 'y' etc. que se usan mucho en nuestro idioma pero que no sirver para determinar que sucede en nuestro texto
+
 import logging
 from urllib.parse import urlparse
 logging.basicConfig(level=logging.INFO)
@@ -17,7 +20,9 @@ def main(filename):                                                             
   df = _extract_host(df)                                                              # Extraemos el 'host' del DataFrame (Ej: elpais.com) y lo agregamos como nueva columnas, enviamos el DataFrame
   df = _fill_missing_titles(df)                                                       # Llenamos los "missign titles" de las noticias, estos aparecen como NaN y extraemos el titulo de la URL y lo colocamos en el DataFrame
   df = _generate_uids_for_rows(df)                                                    # Genera un 'hash' que sera el "uid" de cada articulo de noticia
-  df = _remove_news_lines_from_body(df)
+  df = _remove_news_lines_from_body(df)                                               # Remueve los caracteres y simbolos indicados
+  df = _tokenize_column(df, 'title')                                                  # Creamos nuestra columna 'n_tokens_title' y le pasamos los datos de los token encontrados y los insertamos en el DataFrame, mandamos como parámetro el DataFrame y el nombre de la columna para agregar
+  df = _tokenize_column(df, 'body')                                                   # Hacemos lo mismo pero para el body
   return df                                                                           # Regresamos el DataFrame "Transformado" al Entry Point
 
 
@@ -83,10 +88,30 @@ def _remove_news_lines_from_body(df):                                           
 
 
 
+def _tokenize_column(df, column_name):                                                 # Retorna los datos que iran en "n_tokens_title" que seran el número de palabras dentro del titulo que son significativas, no se cuentas palabras como "la, el, y, o"
+  logger.info('Calculating the number of unique tokens in {} 🔐'.format(column_name))
+  stop_words = set(stopwords.words('spanish'))                                         # Definimos cuales serán nuestro 'Stopwords' dentro de un Set y le decimos que los queremos en Español
+
+  n_tokens = (df.dropna()                                                              # Primero eliminamos cualquier dato que sea un NaN, todo el resultado de las transformaciones las guardamos en la variable "n_tokens"
+            .apply(lambda row: nltk.word_tokenize(row[column_name]), axis=1)           # Tokenizamos las filas con "axis=1" y ".word_tokenize()"
+            .apply(lambda tokens: list(filter(lambda token: token.isalpha(), tokens))) # Eliminamos todas aquellas palabras que no sean Alfanumericas, lo hacemos aplicando un ".filter()" y ".isalpha()", nos regresa un iterados asi que lo pasamos a una lista
+            .apply(lambda tokens: list(map(lambda token: token.lower(), tokens)))      # Convertimos todos los tokens a lowercase, pasamos el resultado de objeto a una lista
+            .apply(lambda word_list: list(filter(lambda word: word not in stop_words, word_list))) # Eliminamos a todas las palabras que sean Stopwords, osea las que esten guardadas en "word_list"
+            .apply(lambda valid_word_list: len(valid_word_list))                       # No queremos en si la lista de palabras, si no su longitud, asi que calculamos la longitud de cada lista
+            )
+  df['n_tokens_{}'.format(column_name)] = n_tokens                                     # Colocamos la cantidad de token encontrados en la columna correspondiente
+  return df
+
+
+
+
 if __name__ == '__main__':                                                            # Este script automatiza (como crear recetas) para la Transformación de datos paso a paso a cualquier dataset de nociticias para que quede limpio
+  nltk.download('punkt')                                                              # Nos da la libreria para poder "tokenizar" es decir dividir palabras
+  nltk.download('stopwords')
   parser = argparse.ArgumentParser()                                                  # Le preguntamos al usuario cual va a ser el archivo con el que vamos a trabajar usando ".ArgumentParser()"
   parser.add_argument('filename', help='The path to the dirty data', type=str)        # Le añadimos un argumento al cual llameremos 'filename' y le agregamos un texto de ayuda 'help' (mensaje que aparecerá cuando usemos comando -h, --help) y le decimo que lo que nos regresará el usuario es un string
   arguments = parser.parse_args()                                                     # Parseamos los argumentos con el método ".parse_args()" viene de libreria y los guardamos en la variable "arguments"            
 
   df = main(arguments.filename)                                                       # Invocamos a la función main(arguments.filename) y le mandamos como argumento el "arguments.filename", y lo guardamos como nuestro DataFrame final
   print(df)                                                                           # Mostramos la información
+  #df.to_csv('eluniversal_limpio.csv', encoding="utf-8", sep = ';')                   # Para crear un CSV con los datos finales y limpiados
