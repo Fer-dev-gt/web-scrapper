@@ -1,5 +1,7 @@
 import pandas as pd
 import argparse                                                                       # Librería para convertir esto en un Script
+import hashlib                                                                        # La librería hashlib nos sirve para trabajar con operacione criptograficas y para generar un hash de la URL
+import re
 import logging
 from urllib.parse import urlparse
 logging.basicConfig(level=logging.INFO)
@@ -14,6 +16,8 @@ def main(filename):                                                             
   df = _add_newspaper_uid_column(df, newspaper_uid)                                   # Modificamos el DataFrame en las columnas le añadimos el UID, recibe 2 parámetros, el DataFrama "df" como lo llevamos trabajando y el valor del UID al cual lo meteremos en el DataFrame
   df = _extract_host(df)                                                              # Extraemos el 'host' del DataFrame (Ej: elpais.com) y lo agregamos como nueva columnas, enviamos el DataFrame
   df = _fill_missing_titles(df)                                                       # Llenamos los "missign titles" de las noticias, estos aparecen como NaN y extraemos el titulo de la URL y lo colocamos en el DataFrame
+  df = _generate_uids_for_rows(df)                                                    # Genera un 'hash' que sera el "uid" de cada articulo de noticia
+  df = _remove_news_lines_from_body(df)
   return df                                                                           # Regresamos el DataFrame "Transformado" al Entry Point
 
 
@@ -55,7 +59,27 @@ def _fill_missing_titles(df):                                                   
                   .applymap(lambda final_title: final_title.capitalize()))            # Por ultimo hacemos que las noticias empiezen con mayuscula para que tenga el mismo formato que el resto de noticias
   df.loc[missing_titles_mask, 'title'] = missig_titles.loc[:, 'missing_titles']       # Asignamos los titulos extraidos a una columna llamada usando la notación ".loc[]", le decimos que seleccionas todas las filas donde hay 'missing titles' y queremos la columna 'title'. Despues del '=' le pasamos todos nuestros 'missing_titles' con ':' y le pasamos la columna 'missing_titles' que es el nombre que le dimos a nuestro grupo en las Expresiones Regulares
   return df                                                                           # Regresamos nuestro DataFrame actualizado
-                  
+
+
+
+def _generate_uids_for_rows(df):                                                      # Genera un uid para cada fila usando "hashes", estos uid reemplazara al indice de fila que viene por defecto
+  logger.info('Generating uids fo each row 🪪')
+  uids = (df.apply(lambda row: hashlib.md5(bytes(row['url'].encode())), axis=1)       # Generamos nuestros "hashes" usando haslib.md5 (no es recomendado por fallos de seguridad) cuando queremos trabajar con las filas usamos "axis=1". Generamos un array de bytes y un f8 por defecto
+            .apply(lambda hash_object: hash_object.hexdigest())                       # Convertimos los datos a una representación hexadecimal usando el método "hexdigest()"   
+          )
+  df['uid'] = uids                                                                    # Añadimos los hashes a la columna 'uid'
+  df.set_index('uid', inplace=True)                                                   # Le decimos que queremos a la columna 'uid' como index de las filas, "implace=True" hace que modifiquemos directamente nuestro DataFrame en vez de generar uno nuevo
+  return df
+
+
+
+def _remove_news_lines_from_body(df):                                                 # Elimina de la seccion de 'body' los saltos de linea (\n) los borra y reformatea el titulos para que este presentable
+  logger.info('Remove new lines from body 🧑🏽‍💻')
+  stripped_body = (df.apply(lambda row: row['body'], axis=1)                          # Obtenemos el 'body' de cada fila con "axis=1"
+                    .apply(lambda body: re.sub(r'(\n|\r)+',r'', body))                # Usando Expresiones regulares eliminamos el simbolo "\n" y "\r" del 'body'
+                  )
+  df['body'] = stripped_body                                                          # Agregamos los nuevos valores a la columna "body"
+  return df
 
 
 
