@@ -23,13 +23,16 @@ def main(filename):                                                             
   df = _remove_news_lines_from_body(df)                                               # Remueve los caracteres y simbolos indicados
   df = _tokenize_column(df, 'title')                                                  # Creamos nuestra columna 'n_tokens_title' y le pasamos los datos de los token encontrados y los insertamos en el DataFrame, mandamos como parámetro el DataFrame y el nombre de la columna para agregar
   df = _tokenize_column(df, 'body')                                                   # Hacemos lo mismo pero para el body
+  df = _remove_duplicate_entries(df, 'title')                                         # Removemos los valores dobles en la columna 'title'
+  df = _drop_rows_with_missing_values(df)                                             # Removemos cualquier fila a la cual le falte un dato
+  _save_data(df, filename)                                                            # Finalmente guardamos el archivo CSV con el nombre que pasemos como parámetro
   return df                                                                           # Regresamos el DataFrame "Transformado" al Entry Point
 
 
 
 def _read_data(filename):                                                             # Lee el archivo CSV y lo devuelve como DataFrame
   logger.info('Reading file {} 🤓'.format(filename))
-  return pd.read_csv(filename)                                                        # Retornamos el resultado (DataFrame) de leer el CSV usando la libreria Pandas como "pd"
+  return pd.read_csv(filename)                                                        # Retornamos el resultado (DataFrame) de leer el CSV usando la libreria Pandas como "pd", puedes colocar "nrows=40" en los parametros de "read_csv" para indicar con cuantas filas quieres que trabaje
 
 
 
@@ -99,8 +102,28 @@ def _tokenize_column(df, column_name):                                          
             .apply(lambda word_list: list(filter(lambda word: word not in stop_words, word_list))) # Eliminamos a todas las palabras que sean Stopwords, osea las que esten guardadas en "word_list"
             .apply(lambda valid_word_list: len(valid_word_list))                       # No queremos en si la lista de palabras, si no su longitud, asi que calculamos la longitud de cada lista
             )
-  df['n_tokens_{}'.format(column_name)] = n_tokens                                     # Colocamos la cantidad de token encontrados en la columna correspondiente
+  df['n_tokens_{}'.format(column_name)] = n_tokens                                     # Colocamos la cantidad de token encontrados en la columna correspondiente 
   return df
+
+
+
+def _remove_duplicate_entries(df, column_name):                                       # Remueve cualquier valor duplicado en la columna que se le indique
+  logger.info('Removing duplicate entries 🧑🏽‍💻')
+  df.drop_duplicates(subset=[column_name], keep='first', inplace=True)                # Con este método eliminamos los duplicados, le mandasmo el "subset" que es el nombre de la columna y le decimos que conserve el primer valor de los duplicados
+  return df
+
+
+
+def _drop_rows_with_missing_values(df):                                               # Quita las filas que no tenga valores adentro. Refuerza el uso del programa para aceptar otros DataSets que no sean los que ya trabajamos desde un inicio
+  logger.info('Dropping rows with missing values 🏷️')
+  return df.dropna()                                                                  # Bota las filas que no tengan valores
+
+
+
+def _save_data(df, filename):                                                         # Guarda los datos transformados y limpios en un archivo CSV
+  clean_filename = 'clean_{}'.format(filename)
+  logger.info('Saving data at location {}'.format(clean_filename))
+  df.to_csv(clean_filename, encoding="utf-8-sig", sep = ';')                          # Para crear un CSV con los datos finales y limpiados
 
 
 
@@ -114,4 +137,3 @@ if __name__ == '__main__':                                                      
 
   df = main(arguments.filename)                                                       # Invocamos a la función main(arguments.filename) y le mandamos como argumento el "arguments.filename", y lo guardamos como nuestro DataFrame final
   print(df)                                                                           # Mostramos la información
-  #df.to_csv('eluniversal_limpio.csv', encoding="utf-8", sep = ';')                   # Para crear un CSV con los datos finales y limpiados
