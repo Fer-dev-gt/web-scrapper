@@ -27,7 +27,7 @@ def _news_scraper(news_site_uid):                                           # Ej
     article = _fetch_article(news_site_uid, host, link)                     # Guardamos el resultado de la función "_fetch_article" que nos permite construir un link al cual podremos acceder y nos ayudara a guardar nuestros datos en un archivo csv
 
     if article:                                                             # Si exite un articulo, mostramos un mensaje de confirmación
-      logger.info('Article fetched!!!')
+      logger.info('Article fetched! ✅')
       articles.append(article)                                              # Agregamos el articulo a mi lista de articulos
       print(article.title)
   print('Número de articulos encontrados: {}'.format(len(articles)))        # Imprimo el número de articulos que logramos obtener
@@ -61,7 +61,7 @@ def _fetch_article(news_site_uid, host, link):                              # No
     logger.warning('Error while fetching the article', exc_info=False)      # Muestro un mensaje personalizado y le digo que la otra info tecnica no la muestre (Para no mostrar mucho texto)
   
   if article and not article.body:                                          # Si encontramos un articulo pero este articulo no tiene un "body" (contenido de la noticia), mostramos un mensaje y no retornamos nada (None)
-    logger.warning('Invalid article. There is no body')
+    logger.warning('Invalid article. There is no body ⛔️')
     return None
   
   return article                                                            # Si todo sale bien retornamos el articulo que contiene un "body"

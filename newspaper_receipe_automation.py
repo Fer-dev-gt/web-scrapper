@@ -63,6 +63,7 @@ def _fill_missing_titles(df):                                                   
   missing_titles_mask = df['title'].isna()                                            # Generamos nuestra mascara Booleana para identificar donde estan los datos faltantes seleccionando la columna 'title' y usando el método ".isna()"        
   missig_titles = (df[missing_titles_mask]['url']                                     # Extramos el titulo de la columna 'url' con los valores que faltan guaradados en 'missing_title_mask' y le aplicamos varias transformaciones para que tenga el formato adecuado
                   .str.extract(r'(?P<missing_titles>[^/]+)$')                         # Usando Expresiones Regulares (le decimos que selecciones todo menos las diagonales, queremos que haya uno o más y nos vamos hasta el final de nuestro string)y dandole un nombre al grupo de coincidencias "missing_titles" usamos el método ".str.extract()"
+                  .applymap(str)
                   .applymap(lambda title: title.replace('-', ' '))                    # Reemplazamos las diagonales que viened de la URL y los reemplazamos por espacios usando el método de Pandas ".applymap()"
                   .applymap(lambda final_title: final_title.capitalize()))            # Por ultimo hacemos que las noticias empiezen con mayuscula para que tenga el mismo formato que el resto de noticias
   df.loc[missing_titles_mask, 'title'] = missig_titles.loc[:, 'missing_titles']       # Asignamos los titulos extraidos a una columna llamada usando la notación ".loc[]", le decimos que seleccionas todas las filas donde hay 'missing titles' y queremos la columna 'title'. Despues del '=' le pasamos todos nuestros 'missing_titles' con ':' y le pasamos la columna 'missing_titles' que es el nombre que le dimos a nuestro grupo en las Expresiones Regulares
@@ -96,12 +97,12 @@ def _tokenize_column(df, column_name):                                          
   stop_words = set(stopwords.words('spanish'))                                         # Definimos cuales serán nuestro 'Stopwords' dentro de un Set y le decimos que los queremos en Español
 
   n_tokens = (df.dropna()                                                              # Primero eliminamos cualquier dato que sea un NaN, todo el resultado de las transformaciones las guardamos en la variable "n_tokens"
-            .apply(lambda row: nltk.word_tokenize(row[column_name]), axis=1)           # Tokenizamos las filas con "axis=1" y ".word_tokenize()"
-            .apply(lambda tokens: list(filter(lambda token: token.isalpha(), tokens))) # Eliminamos todas aquellas palabras que no sean Alfanumericas, lo hacemos aplicando un ".filter()" y ".isalpha()", nos regresa un iterados asi que lo pasamos a una lista
-            .apply(lambda tokens: list(map(lambda token: token.lower(), tokens)))      # Convertimos todos los tokens a lowercase, pasamos el resultado de objeto a una lista
-            .apply(lambda word_list: list(filter(lambda word: word not in stop_words, word_list))) # Eliminamos a todas las palabras que sean Stopwords, osea las que esten guardadas en "word_list"
-            .apply(lambda valid_word_list: len(valid_word_list))                       # No queremos en si la lista de palabras, si no su longitud, asi que calculamos la longitud de cada lista
-            )
+    .apply(lambda row: nltk.word_tokenize(row[column_name]), axis=1)                   # Tokenizamos las filas con "axis=1" y ".word_tokenize()"
+    .apply(lambda tokens: list(filter(lambda token: token.isalpha(), tokens)))         # Eliminamos todas aquellas palabras que no sean Alfanumericas, lo hacemos aplicando un ".filter()" y ".isalpha()", nos regresa un iterados asi que lo pasamos a una lista
+    .apply(lambda tokens: list(map(lambda token: token.lower(), tokens)))              # Convertimos todos los tokens a lowercase, pasamos el resultado de objeto a una lista
+    .apply(lambda word_list: list(filter(lambda word: word not in stop_words, word_list))) # Eliminamos a todas las palabras que sean Stopwords, osea las que esten guardadas en "word_list"
+    .apply(lambda valid_word_list: len(valid_word_list))                               # No queremos en si la lista de palabras, si no su longitud, asi que calculamos la longitud de cada lista
+    )       
   df['n_tokens_{}'.format(column_name)] = n_tokens                                     # Colocamos la cantidad de token encontrados en la columna correspondiente 
   return df
 

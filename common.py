@@ -8,4 +8,4 @@ def config():                                                             # Reto
     with open('config.yaml', mode='r') as file:                           # Abrimos el archivo config.yaml
       __config = yaml.load(file, Loader=yaml.FullLoader)                  # Guardamos el archivo a "__config", funcion retorna un diccionario
   #   __config = yaml.safe_load(file)
-  return __config                                                          # Retornamos nuestra configuracion
+  return __config                                                         # Retornamos nuestra configuracion

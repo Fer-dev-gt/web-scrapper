@@ -3,12 +3,24 @@ news_sites:                                                                   # 
   eluniversal:
     url: http://www.eluniversal.com.mx
     queries:                                                                  # Agregamos la sección de 'queries' que serán los links dentro de las paginas web a lo que le haremos el "web scrapping"
-      homepage_article_links: '.regionals__title a'                           # Usando selectores de CSS indicamos que elemento le haremos el 'web scrappin', pueden ser unos cuantos y cientos de links (chequear la página para ver los selectores a utilizar)
-      article_body: '.columm2'                                                # Añado los selectores para el cuerpo de la noticia
+      homepage_article_links: '.layout-grid__main a'                          # Usando selectores de CSS indicamos que elemento le haremos el 'web scrappin', pueden ser unos cuantos y cientos de links (chequear la página para ver los selectores a utilizar)
+      article_body: '.sc'                                                     # Añado los selectores para el cuerpo de la noticia
       article_title: '.sc__header h1'                                         # Selector para el titulo de la noticia
   elpais:
     url: https://elpais.com
     queries:
       homepage_article_links: '.c_h a'
       article_body: '.a_c'
-      article_title: '.a_e_txt h1' 
+      article_title: '.a_e_txt h1'
+  prensalibre:
+    url: https://www.prensalibre.com/
+    queries:
+      homepage_article_links: '.story-title a'
+      article_body: '.sart-content'
+      article_title: '.sart-head-content h1'
+  cnbc:
+    url: https://www.cnbc.com/
+    queries:
+      homepage_article_links: '.RiverPlusCard-container a'
+      article_body: '.group'
+      article_title: '.ArticleHeader-headerContentContainer h1'
