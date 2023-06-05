@@ -9,7 +9,7 @@ from requests.exceptions import HTTPError
 from urllib3.exceptions import MaxRetryError
 
 logging.basicConfig(level=logging.INFO)                                     # Configuramos la manera de hacer logging y mostrarlo en pantalla al cambiarle el "level"
-logger = logging.getLogger(__name__)                                        # Obtenemos una referencia a nuestro "logger" y le damos el nombre de nuestro archivo
+logger = logging.getLogger(__name__)                                        # Obtenemos una referencia a nuestro "logger" y le damos el nombre de nuestro archivo para que lo muestre en la consola a la hora de mostrar un mensaje. Ej: "INFO:__main__:Loading"
 
 is_well_formed_link = re.compile(r'^https?://.+/.+$')                       # Definimos el formato que debe tener un link valido. Ejemplo del tipo de patron que acepta la Expresión Regular "https://example.com/hello"
 is_root_path = re.compile(r'^/.+$')                                         # Definimos el formato de los links que se basa a la raiz (root). Ejemplo: /some-text
