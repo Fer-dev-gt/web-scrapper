@@ -1,0 +1,13 @@
+.DS_Store
+__pycache__/
+.vscode
+consejos_alumnos.py
+clean_cnbc_2023_06_03_articles.csv
+clean_elpais_2023_05_31_articles.csv
+clean_eluniversal_2023_06_03_articles.csv
+clean_prensalibre_2023_06_03_articles.csv
+cnbc_2023_06_03_articles.csv
+elpais_2023_05_31_articles.csv
+eluniversal_2023_06_03_articles.csv
+prensalibre_2023_06_03_articles.csv
+*.csv
