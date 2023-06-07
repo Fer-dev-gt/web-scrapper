@@ -3,7 +3,6 @@ import requests
 from common import config                                                           # Importamos del archivo 'common' la función que nos da acceso a nuestra configuración
 
 class NewsPage:                                                                     # Generamos "Abstracción" usando Clases con el fin de compartir el código
-
   def __init__(self, news_site_uid, url):                                           # Método que inicializa esta clase
     self._config = config()['news_sites'][news_site_uid]                            # Obtenemos una referencia a nuestra configuración llamando a la función "config()" y accedemos a nuestra primera llave del diccionario "[news_sites]" le pasamos el id que estamos usando como parámetro "[news_site_uid]"
     self._queries = self._config['queries']                                         # Vamos a obtener "queries" de la configuración de arriba y le decimos que queremos esas "queries" y la guardamos en la variable 'self._queries'
@@ -22,7 +21,6 @@ class NewsPage:                                                                 
 
 
 class HomePage(NewsPage):                                                           # HomePage se vuelve una "subclase" de NewsPage. Esta clase va a representar la página principal de nuestra web, esta clase extiende de la clase 'NewsPage' usas sus funciones y métodos
-
   def __init__(self, news_site_uid, url):                                           # Método para inicializarlo, recibe 3 parámetros, el "self", la "url" y el id del sitio de noticias
     super().__init__(news_site_uid, url)                                            # Para poder inicializar esta "super clase" usamos la funcion "super()." que nos da acceso al método "__init__" y le pasamos los 2 argumentos de inicialización
 

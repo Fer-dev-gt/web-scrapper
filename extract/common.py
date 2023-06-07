@@ -4,8 +4,8 @@ __config = None                                                           # Vari
 
 def config():                                                             # Retorna un diccionario, recibe el archivo como parámetro (más abajo)
   global __config
-  if not __config:                                                        # Solo vamos a leer la configuracion una sola vez, y si ya esta cargada solo la devolvemos y si no esta cargada la devolvemos
+  if not __config:                                                        # Solo vamos a leer la configuracion una sola vez, y si ya esta cargada solo la devolvemos y si no esta cargada la abrimos y enviamos
     with open('config.yaml', mode='r') as file:                           # Abrimos el archivo config.yaml
       __config = yaml.load(file, Loader=yaml.FullLoader)                  # Guardamos el archivo a "__config", funcion retorna un diccionario
-  #   __config = yaml.safe_load(file)
+      #__config = yaml.safe_load(file)
   return __config                                                         # Retornamos nuestra configuracion

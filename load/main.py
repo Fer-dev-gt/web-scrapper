@@ -1,22 +1,22 @@
 # Archivo principal que se encarga de subir nuestros datos a la DB SQL
-import argparse                                                                         # Importamos 'argparse' porque queremos convertir nuestro script en un programa ejecutable
+import argparse                                                                             # Importamos 'argparse' porque queremos convertir nuestro script en un programa ejecutable
 import pandas as pd
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from article import Article                                                             # Nos traemos del archivo 'article.py' la clase Article que extiende de la clase Base              
-from base import Base, engine, Session                                                  # Nos traemos las variable que declaramos en el archivo 'base'
+from article import Article                                                                 # Nos traemos del archivo 'article.py' la clase Article que extiende de la clase Base              
+from base import Base, engine, Session                                                      # Nos traemos las variable que declaramos en el archivo 'base'
 
-def main(filename):                                                                     # La función main recibe el 'filename'
-  Base.metadata.create_all(engine)                                                      # Esto nos permite generar nuestra 'squema' en nuestra base de datos
-  session = Session()                                                                   # Inicializamos nuestra sesion
-  articles = pd.read_csv(filename, on_bad_lines='skip', sep=';')                        # Vamos a leer nuestros articulos (filename) usando Pandas
+def main(filename):                                                                         # La función main recibe el 'filename'
+  Base.metadata.create_all(engine)                                                          # Esto nos permite generar nuestra 'squema' en nuestra base de datos
+  session = Session()                                                                       # Inicializamos nuestra sesion
+  articles = pd.read_csv(filename, on_bad_lines='skip', sep=';')                            # Vamos a leer nuestros articulos (filename) usando Pandas
 
-  for index, row in articles.iterrows():                                                # Usamos el método de Pandas 'iterrows()' que nos permite generar un 'loop' adentro de cada una de nuestras filas de nuestro DataFrame que nos data un "index, row"
+  for index, row in articles.iterrows():                                                    # Usamos el método de Pandas 'iterrows()' que nos permite generar un 'loop' adentro de cada una de nuestras filas de nuestro DataFrame que nos da un "index, row"
     logger.info('Loading article uid {} into DB'.format(row['uid']))
-    article = Article(row['uid'],                                                       # Generamos nuestro articulos al pasarle nuestros valores al constructor de la Clase Article, siempre usando la notación 'row['value']'
+    article = Article(row['uid'],                                                           # Generamos nuestro articulos (Objeto tipo Article) al pasarle nuestros valores al constructor de la Clase Article, siempre usando la notación 'row['value']'
                       row['body'],
                       row['host'],
                       row['newspaper_uid'],
@@ -24,10 +24,10 @@ def main(filename):                                                             
                       row['n_tokens_title'],
                       row['title'],
                       row['url'])
-    session.add(article)                                                                # Esta instucción ya nos ingresa nuestros articulos a la base de datos
+    session.add(article)                                                                    # Esta instucción ya nos ingresa nuestros articulos a la base de datos
 
-  session.commit()                                                                      # Le damos un commit a la sesion
-  session.close()                                                                       # Cerramos la sesion
+  session.commit()                                                                          # Le damos un commit a la sesion
+  session.close()                                                                           # Cerramos nuestra sesion
 
 
 
